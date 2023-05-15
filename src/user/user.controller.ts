@@ -24,7 +24,7 @@ export class UserController {
       return result;
   }
 
-  @UseGuards(AuthGuard)
+  
   @Get()
   findAll() {
     return this.userService.findAll();
