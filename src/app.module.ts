@@ -7,6 +7,7 @@ import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { ConfigModule } from '@nestjs/config';
+import { Post } from './post/post.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ConfigModule } from '@nestjs/config';
       entities: [User],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Post]),
     UserModule,
     PostModule,
     AuthModule

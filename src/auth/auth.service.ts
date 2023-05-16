@@ -1,27 +1,54 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
+import * as argon from 'argon2';
+import { ConfigService } from '@nestjs/config';
+import { AuthInDto } from './login.dto';
+import { Repository } from 'typeorm';
+import { User } from 'src/user/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
+
 export class AuthService {
-    constructor(private readonly usersService: UserService, private jwtService: JwtService) { }
-    async validateUser(username: string, password: string): Promise<any> {
-        const user = await this.usersService.getUser({ username });
-        if (!user) return null;
-        const passwordValid = await bcrypt.compare(password, user.password)
+
+    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>, private jwt: JwtService, private config: ConfigService) { }
+
+    async login(dtoin: AuthInDto) {
+        const { password, username } = dtoin;
+        const user = await this.validateUser(username);
         if (!user) {
-            throw new NotAcceptableException('could not find the user');
+            throw new ForbiddenException('Credentials incorrect');
         }
-        if (user && passwordValid) {
-            return user;
+        const pwMatches = await argon.verify(user.password, password);
+        if (!pwMatches) {
+            throw new ForbiddenException('Credentials incorrect');
         }
-        return null;
+        console.log('hiiiiiiii user', user);
+        return this.signtoken(user.username)
+
+        // return this.signtoken(customer.id, customer.email, customer.role); // Pass the customer.id as the first argument
     }
-    async login(user: any) {
-        const payload = { username: user.username, sub: user._id };
+
+    async signtoken(username) {
+        const secret = this.config.get('JWT_SECRET');
+        const info = { username };
+        const token = await this.jwt.sign(info, {
+            expiresIn: '50m',
+            secret: secret,
+        });
         return {
-            access_token: this.jwtService.sign(payload),
+            access_token: token,
         };
     }
+
+    async validateUser(username: string) {
+        const user = await this.usersRepository.findOne({
+            where: {
+                username: username
+            },
+            select: ['username', 'password']
+        });
+        return user;
+    }
+
 }

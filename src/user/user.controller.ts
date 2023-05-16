@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
-import * as bcrypt from 'bcrypt';
+import * as argon from 'argon2';
 import { AuthGuard } from '@nestjs/passport';
 
 
@@ -11,19 +11,12 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Post('/signup')
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.userService.create(createUserDto);
-  // }
-
   @Post('/signup')
   async createUser(@Body('password') password: string, @Body('username') username: string,): Promise<User> {
-      const saltOrRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltOrRounds);
+      const hashedPassword = await argon.hash(password);
       const result = await this.userService.createUser(username, hashedPassword,);
       return result;
   }
-
   
   @Get()
   findAll() {

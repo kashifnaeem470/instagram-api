@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-Entity('post')
+@Entity('post')
 export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
