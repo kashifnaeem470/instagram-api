@@ -11,24 +11,24 @@ export class User extends BaseEntity {
     @Column({ unique: true })
     username: string;
 
-    // @IsString()
-    // @IsNotEmpty()
-    // @Column()
-    // name: string;
+    @IsString()
+    @IsNotEmpty()
+    @Column()
+    name: string;
 
-    // @IsString()
-    // @IsNotEmpty()
-    // @Column({ unique: true })
-    // email: string;
+    @IsString()
+    @IsNotEmpty()
+    @Column({ unique: true })
+    email: string;
 
     @IsString()
     @IsNotEmpty()
     @Column({ select: false })
     password: string;
 
-    // @IsNumber()
-    // @Column()
-    // age: number
+    @IsNumber()
+    @Column()
+    age: number
 
     // @IsString()
     // @IsOptional()

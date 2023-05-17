@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { Any, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -11,20 +10,6 @@ export class UserService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) { }
-
-
-  // create(createUserDto: CreateUserDto) {
-  //   console.log('This action adds a new user');
-  //   return this.usersRepository.create(createUserDto);
-  // }
-
-  async createUser(username: string, password: string): Promise<User> {
-    return this.usersRepository.save({username, password,});
-}
-
-  async getUser(query: any): Promise<User> {
-    return this.usersRepository.findOne(query);
-  }
 
   findAll(): Promise<User[]> {
     console.log('This action returns all user');

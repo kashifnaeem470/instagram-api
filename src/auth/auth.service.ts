@@ -2,17 +2,38 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
-import { AuthInDto } from './login.dto';
+import { AuthInDto } from './dto/login.dto';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MailService } from 'src/mail/mail.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 
 export class AuthService {
 
-    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>, private jwt: JwtService, private config: ConfigService) { }
+    constructor(
+        @InjectRepository(User) private readonly usersRepository: Repository<User>,
+        private jwt: JwtService,
+        private config: ConfigService,
+        private mailservice: MailService) { }
 
+
+    //resgister user
+    async createUser(user: CreateUserDto): Promise<User> {
+        const hashedPassword = await argon.hash(user.password);
+        const newUser = this.usersRepository.create({
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            password: hashedPassword,
+            age: user.age,
+        });
+        return this.usersRepository.save(newUser);
+    }
+
+    //login
     async login(dtoin: AuthInDto) {
         const { password, username } = dtoin;
         const user = await this.validateUser(username);
@@ -23,9 +44,10 @@ export class AuthService {
         if (!pwMatches) {
             throw new ForbiddenException('Credentials incorrect');
         }
-        console.log('hiiiiiiii user', user);
-        return this.signtoken(user.username)
 
+        await this.mailservice.sendUserConfirmation(user);
+        console.log('Welcome', user.username);
+        return this.signtoken(user.username)
         // return this.signtoken(customer.id, customer.email, customer.role); // Pass the customer.id as the first argument
     }
 
@@ -46,7 +68,7 @@ export class AuthService {
             where: {
                 username: username
             },
-            select: ['username', 'password']
+            select: ['username', 'password', 'email']
         });
         return user;
     }

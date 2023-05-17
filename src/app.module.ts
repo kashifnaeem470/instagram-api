@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { Post } from './post/post.entity';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { Post } from './post/post.entity';
     TypeOrmModule.forFeature([User, Post]),
     UserModule,
     PostModule,
-    AuthModule
+    AuthModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,6 +11,7 @@ import { UserService } from 'src/user/user.service';
 import { jwtConatstant } from './jwt.constant';
 import { JwtAuthGuard } from './auth.guard';
 import { Repository } from 'typeorm';
+import { MailService } from 'src/mail/mail.service';
 
 
 @Module({
@@ -19,7 +20,7 @@ import { Repository } from 'typeorm';
   
   }), 
   TypeOrmModule.forFeature([User])],
-  providers: [AuthService, UserService,JwtAuthGuard, Repository],
+  providers: [AuthService, UserService,JwtAuthGuard, Repository, MailService],
   exports: [JwtAuthGuard, AuthService],
   controllers: [AuthController],
 })

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
 import * as argon from 'argon2';
@@ -11,12 +11,12 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/signup')
-  async createUser(@Body('password') password: string, @Body('username') username: string,): Promise<User> {
-      const hashedPassword = await argon.hash(password);
-      const result = await this.userService.createUser(username, hashedPassword,);
-      return result;
-  }
+  // @Post('/signup')
+  // async createUser(@Body('password') password: string, @Body('username') username: string,): Promise<User> {
+  //     const hashedPassword = await argon.hash(password);
+  //     const result = await this.userService.createUser(username, hashedPassword,);
+  //     return result;
+  // }
   
   @Get()
   findAll() {
