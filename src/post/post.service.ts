@@ -5,16 +5,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private readonly cloudinaryService:CloudinaryService
   ) { }
 
   //create post
-  async create(id: number, createPostDto: CreatePostDto) {
+  async create(id: number, createPostDto: CreatePostDto, file: Express.Multer.File) {
     const user = await this.usersRepository.findOne({
       where: {
         id: id,
@@ -24,11 +27,20 @@ export class PostService {
     //   title: createPostDto.title,
     //   user: user
     // })
+    let imageLink = null;
+
+    if (file) {
+      const result = await this.cloudinaryService.uploadImage(file); // use CloudinaryService to upload image
+      imageLink = result.secure_url;
+    }
+
     const post = new Post();
     post.title = createPostDto.title;
+    post.description = createPostDto.description;
+    post.picture = imageLink;
     post.user = user;
 
-    return this.postRepository.save(post);
+    return await this.postRepository.save(post);
   }
 
   //show all posts
@@ -62,17 +74,13 @@ export class PostService {
       }
     })
 
-    // const post = await this.postRepository
-    //   .createQueryBuilder('post')
-    //   .where('post.id = :postId', { postId })
-    //   .andWhere('post.userId = :userId', { userId })
-    //   .getOne();
-
     if (!post) {
       throw new NotFoundException('Post not found');
     }
 
     post.title = updatePostDto.title;
+    post.description = updatePostDto.description;
+
     return this.postRepository.save(post);
   }
 
