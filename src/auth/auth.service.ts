@@ -45,15 +45,15 @@ export class AuthService {
             throw new ForbiddenException('Credentials incorrect');
         }
 
-        await this.mailservice.sendUserConfirmation(user);
-        console.log('Welcome', user.username);
-        return this.signtoken(user.username)
-        // return this.signtoken(customer.id, customer.email, customer.role); // Pass the customer.id as the first argument
+        // await this.mailservice.sendUserConfirmation(user);
+        console.log('Welcome', user.id, user.username,);
+        return this.signtoken( user.id, user.username)
+       
     }
 
-    async signtoken(username) {
+    async signtoken(id, username) {
         const secret = this.config.get('JWT_SECRET');
-        const info = { username };
+        const info = { id, username };
         const token = await this.jwt.sign(info, {
             expiresIn: '50m',
             secret: secret,
@@ -68,7 +68,7 @@ export class AuthService {
             where: {
                 username: username
             },
-            select: ['username', 'password', 'email']
+            select: ['username', 'password', 'email', 'id']
         });
         return user;
     }

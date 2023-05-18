@@ -22,7 +22,7 @@ import { MailModule } from './mail/mail.module';
       username: 'postgres',
       password: 'admin',
       database: 'instagram',
-      entities: [User],
+      entities: [User,Post],
       synchronize: true,
     }),
     TypeOrmModule.forFeature([User, Post]),

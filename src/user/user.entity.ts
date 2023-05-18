@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Post } from "src/post/post.entity";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -29,6 +30,9 @@ export class User extends BaseEntity {
     @IsNumber()
     @Column()
     age: number
+
+    @OneToMany(() => Post, (post) => post.user)
+    posts: Post[];
 
     // @IsString()
     // @IsOptional()
