@@ -16,7 +16,7 @@ export class User extends BaseEntity {
     @IsString()
     @IsNotEmpty()
     @Column()
-    name: string;
+    name: string;naem
 
     @IsString()
     @IsNotEmpty()
@@ -38,8 +38,7 @@ export class User extends BaseEntity {
     @OneToMany(() => Comment, (comment) => comment.user)
     comments: Comment[];
 
-    // @IsString()
-    // @IsOptional()
-    // @Column({ default: '' })
-    // display_picture: string
+    @IsString()
+    @Column({ nullable: false, default: '' })
+    picture: string;
 }

@@ -1,4 +1,4 @@
-import { IsInt, IsString, IsOptional } from "class-validator";
+import { IsInt, IsString, IsNotEmpty } from "class-validator";
 
 export class CreateUserDto {
     @IsString()
@@ -16,7 +16,7 @@ export class CreateUserDto {
     @IsInt()
     age: number;
 
-    // @IsString()
-    // @IsOptional()
-    // display_picture: string
+    @IsNotEmpty()
+    @IsString()
+    display_picture: string
 }

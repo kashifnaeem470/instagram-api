@@ -8,6 +8,7 @@ import { User } from 'src/user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 
@@ -17,11 +18,18 @@ export class AuthService {
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         private jwt: JwtService,
         private config: ConfigService,
-        private mailservice: MailService) { }
+        private mailservice: MailService,
+        private readonly cloudinaryService:CloudinaryService) { }
 
 
     //resgister user
-    async createUser(user: CreateUserDto): Promise<User> {
+    async createUser(user: CreateUserDto, file: Express.Multer.File): Promise<User> {
+        let imageLink = null;
+
+        if (file) {
+            const result = await this.cloudinaryService.uploadImage(file); // use CloudinaryService to upload image
+            imageLink = result.secure_url;
+        }
         const hashedPassword = await argon.hash(user.password);
         const newUser = this.usersRepository.create({
             username: user.username,
@@ -29,6 +37,7 @@ export class AuthService {
             email: user.email,
             password: hashedPassword,
             age: user.age,
+            picture: imageLink
         });
         return this.usersRepository.save(newUser);
     }
@@ -47,8 +56,8 @@ export class AuthService {
 
         // await this.mailservice.sendUserConfirmation(user);
         console.log('Welcome', user.id, user.username,);
-        return this.signtoken( user.id, user.username)
-       
+        return this.signtoken(user.id, user.username)
+
     }
 
     async signtoken(id, username) {
