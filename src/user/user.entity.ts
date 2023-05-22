@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Comment } from "src/comment/comment.entity";
 import { Post } from "src/post/post.entity";
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -34,9 +35,11 @@ export class User extends BaseEntity {
     @OneToMany(() => Post, (post) => post.user)
     posts: Post[];
 
+    @OneToMany(() => Comment, (comment) => comment.user)
+    comments: Comment[];
+
     // @IsString()
     // @IsOptional()
     // @Column({ default: '' })
     // display_picture: string
-
 }

@@ -9,6 +9,8 @@ import { User } from './user/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { Post } from './post/post.entity';
 import { MailModule } from './mail/mail.module';
+import { CommentModule } from './comment/comment.module';
+import { Comment } from './comment/comment.entity';
 
 @Module({
   imports: [
@@ -22,14 +24,15 @@ import { MailModule } from './mail/mail.module';
       username: 'postgres',
       password: 'admin',
       database: 'instagram',
-      entities: [User,Post],
+      entities: [User,Post,Comment],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User, Post]),
+    TypeOrmModule.forFeature([User, Post, Comment]),
     UserModule,
     PostModule,
     AuthModule,
-    MailModule
+    MailModule,
+    CommentModule
   ],
   controllers: [AppController],
   providers: [AppService],

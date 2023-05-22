@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
+import { Comment } from "src/comment/comment.entity";
 import { User } from "src/user/user.entity";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('post')
 export class Post extends BaseEntity {
@@ -38,5 +39,8 @@ export class Post extends BaseEntity {
   
   @IsString()
   @Column({ nullable: false, default: '' })
-  picture: string
+  picture: string;
+
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
 }

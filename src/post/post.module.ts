@@ -6,9 +6,10 @@ import { Post } from './post.entity';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/user/user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Comment } from 'src/comment/comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User,Post])],
+  imports: [TypeOrmModule.forFeature([User,Post,Comment])],
   controllers: [PostController],
   providers: [PostService, CloudinaryService]
 })
