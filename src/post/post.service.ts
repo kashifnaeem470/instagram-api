@@ -3,9 +3,10 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Console } from 'console';
 
 
 @Injectable()
@@ -44,10 +45,11 @@ export class PostService {
   }
 
   //show all posts
-  async findAll() {
-    return await this.postRepository.find();
-  }
+  // async findAll() {
+  //   return await this.postRepository.find();
+  // }
 
+  //user posts
   async getUserPosts(userId: number): Promise<Post[]> {
     const posts = await this.postRepository.find({
       where: {
@@ -61,6 +63,21 @@ export class PostService {
     } else {
       console.log('Post not found')
     }
+  }
+
+
+  async findAll(searchQuery?: string): Promise<Post[]> {
+    if (searchQuery) {
+      return await this.postRepository.find({
+        where: {
+          title: ILike(`%${searchQuery}%`),
+        },
+      });
+    }
+
+    console.log(searchQuery);
+  
+    return await this.postRepository.find();
   }
 
   //edit post

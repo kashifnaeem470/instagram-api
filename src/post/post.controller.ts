@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -14,16 +14,16 @@ export class PostController {
   //create post
   @UseInterceptors(FileInterceptor('file'))
   @Post()
-  async createPost(@CurrentUser() User: { username: string, id: number }, 
-  @Body({} as any) createPostDto: CreatePostDto,
-  @UploadedFile() file:Express.Multer.File ) {
+  async createPost(@CurrentUser() User: { username: string, id: number },
+    @Body({} as any) createPostDto: CreatePostDto,
+    @UploadedFile() file: Express.Multer.File) {
     return await this.postService.create(User.id, createPostDto, file);
   }
 
   //show all posts
   @Get()
-  async getAllPosts() {
-    return await this.postService.findAll();
+  async getAllPosts(@Query('searchQuery') searchQuery?: string) {
+    return await this.postService.findAll(searchQuery);
   }
 
   //show user posts
